@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Rhomaion — Imperiul Bizantin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --gold-pale: #e8c96a;
+      --crimson: #8b1a1a;
+      --crimson-light: #c0392b;
+      --deep: #0a0705;
+      --bg: #080603;
+      --purple: #2d1b4e;
+      --purple-light: #4a2d7a;
+      --ivory: #f5f0e8;
+      --muted: #a89070;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ═══════════════════════════════
+       LIQUID GLASS NAVBAR
+    ═══════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 2.5rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    nav.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-100%);
+    }
+
+    .nav-glass {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.06) 0%,
+        rgba(138,90,200,0.04) 30%,
+        rgba(201,168,76,0.05) 65%,
+        rgba(255,255,255,0.03) 100%
+      );
+      backdrop-filter: blur(22px) saturate(1.6) brightness(1.1);
+      -webkit-backdrop-filter: blur(22px) saturate(1.6) brightness(1.1);
+      border-bottom: 1px solid rgba(201,168,76,0.13);
+      box-shadow:
+        0 1px 0 rgba(138,90,200,0.06) inset,
+        0 8px 32px rgba(0,0,0,0.4),
+        0 2px 8px rgba(138,90,200,0.04);
+    }
+
+    .nav-glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), rgba(255,255,255,0.3), rgba(201,168,76,0.5), transparent);
+    }
+
+    /* Liquid bubble effect */
+    .nav-glass::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 100% at 30% 0%, rgba(255,255,255,0.06) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 80% at 80% 0%, rgba(201,168,76,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .nav-logo {
+      position: relative;
+      z-index: 1;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--gold-light);
+      text-shadow: 0 0 20px rgba(201,168,76,0.4);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-logo span {
+      color: rgba(240,208,128,0.6);
+      font-weight: 400;
+    }
+
+    .nav-links {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 0.45rem 1rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.7);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-links a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(201,168,76,0.05));
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: 6px;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold-light);
+      border-color: rgba(201,168,76,0.25);
+      text-shadow: 0 0 12px rgba(201,168,76,0.4);
+    }
+
+    .nav-links a:hover::before { opacity: 1; }
+
+    .nav-cta {
+      position: relative;
+      z-index: 1;
+      padding: 0.5rem 1.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(201,168,76,0.25), 0 2px 8px rgba(0,0,0,0.3);
+      font-weight: 600;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 35px rgba(201,168,76,0.45), 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    /* ═══════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Mosaic background */
+    .hero-mosaic {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,45,122,0.55) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 15% 60%, rgba(45,27,78,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(139,26,26,0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(45,27,78,0.28) 0%, transparent 60%);
+    }
+
+    /* Animated gold particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float-particle linear infinite;
+    }
+
+    @keyframes float-particle {
+      0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-10vh) translateX(40px) scale(1.5); opacity: 0; }
+    }
+
+    /* Cross pattern overlay */
+    .hero-cross {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+    }
+
+    /* Large decorative cross */
+    .hero-emblem {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      opacity: 0.025;
+      pointer-events: none;
+    }
+
+    .hero-emblem svg {
+      width: 100%; height: 100%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+      animation: fade-up 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      animation: fade-up 1.4s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '✦';
+      margin: 0 1rem;
+      font-size: 0.6em;
+      opacity: 0.6;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: transparent;
+      background: linear-gradient(
+        160deg,
+        var(--gold-light) 0%,
+        var(--gold) 30%,
+        #fff8e7 50%,
+        var(--gold) 70%,
+        var(--gold-pale) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 40px rgba(201,168,76,0.35));
+      margin-bottom: 0.4rem;
+      animation: fade-up 1.4s 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-subtitle-greek {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      color: rgba(201,168,76,0.45);
+      letter-spacing: 0.2em;
+      margin-bottom: 2.5rem;
+      animation: fade-up 1.4s 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-divider {
+      width: 180px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 2.5rem;
+      animation: fade-up 1.4s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+      line-height: 1.85;
+      color: rgba(245,240,232,0.75);
+      font-style: italic;
+      max-width: 680px;
+      margin: 0 auto 3.5rem;
+      animation: fade-up 1.4s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fade-up 1.4s 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .btn-primary {
+      padding: 0.9rem 2.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 60%, #b8943e 100%);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 30px rgba(201,168,76,0.3), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -60%;
+      width: 30%;
+      height: 200%;
+      background: rgba(255,255,255,0.25);
+      transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover::after { left: 130%; }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(201,168,76,0.5), 0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+
+    .btn-secondary {
+      padding: 0.9rem 2.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(201,168,76,0.7);
+      background: rgba(201,168,76,0.06);
+      box-shadow: 0 0 20px rgba(201,168,76,0.1);
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.4;
+      animation: fade-up 2s 1.2s ease both, pulse-scroll 2.5s 2.2s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes pulse-scroll {
+      0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 0.7; transform: translateX(-50%) translateY(4px); }
+    }
+
+    .scroll-indicator span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      transform: rotate(45deg);
+    }
+
+    /* ═══════════════════════════════
+       SECTIONS
+    ═══════════════════════════════ */
+    section {
+      padding: 8rem 2rem;
+      position: relative;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-tag::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .section-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 30px rgba(201,168,76,0.2));
+    }
+
+    /* ═══════════════════════════════
+       INTRO — WHAT IS BYZANTIUM
+    ═══════════════════════════════ */
+    .intro-section {
+      background:
+        radial-gradient(ellipse 70% 60% at 0% 50%, rgba(74,45,122,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 100% 50%, rgba(139,26,26,0.1) 0%, transparent 60%);
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+      margin-top: 4rem;
+    }
+
+    .intro-text p {
+      font-size: 1.15rem;
+      line-height: 1.95;
+      color: rgba(245,240,232,0.78);
+      margin-bottom: 1.6rem;
+    }
+
+    .intro-text p strong {
+      color: var(--gold-light);
+      font-style: normal;
+    }
+
+    .intro-quote {
+      border-left: 2px solid rgba(138,90,200,0.5);
+      padding: 1.5rem 2rem;
+      margin: 2.5rem 0;
+      background: rgba(138,90,200,0.04);
+    }
+
+    .intro-quote blockquote {
+      font-size: 1.3rem;
+      line-height: 1.75;
+      font-style: italic;
+      color: rgba(245,240,232,0.85);
+    }
+
+    .intro-quote cite {
+      display: block;
+      margin-top: 1rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .intro-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(201,168,76,0.04));
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 2px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(138,90,200,0.6), var(--gold), transparent);
+    }
+
+    .stat-card:hover {
+      border-color: rgba(201,168,76,0.3);
+      background: linear-gradient(135deg, rgba(138,90,200,0.05), rgba(201,168,76,0.07));
+      transform: translateX(4px);
+    }
+
+    .stat-number {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.7rem;
+    }
+
+    .stat-desc {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: rgba(245,240,232,0.55);
+      font-style: italic;
+    }
+
+    /* ═══════════════════════════════
+       TIMELINE
+    ═══════════════════════════════ */
+    .timeline-section {
+      background:
+        linear-gradient(180deg, transparent 0%, rgba(74,45,122,0.07) 50%, transparent 100%);
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 5rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(138,90,200,0.3) 10%, rgba(201,168,76,0.35) 50%, rgba(138,90,200,0.3) 90%, transparent);
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 0;
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content {
+      grid-column: 1;
+      text-align: right;
+      padding-right: 3rem;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-empty { grid-column: 3; }
+
+    .timeline-item:nth-child(even) .timeline-content {
+      grid-column: 3;
+      text-align: left;
+      padding-left: 3rem;
+    }
+
+    .timeline-item:nth-child(even) .timeline-empty { grid-column: 1; }
+
+    .timeline-center {
+      grid-column: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .timeline-dot {
+      width: 14px;
+      height: 14px;
+      background: var(--gold);
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 12px rgba(201,168,76,0.6);
+      margin-top: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .timeline-year {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-top: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .timeline-content h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      color: var(--gold-light);
+      margin-bottom: 0.6rem;
+    }
+
+    .timeline-content p {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: rgba(245,240,232,0.6);
+      font-style: italic;
+    }
+
+    /* ═══════════════════════════════
+       PILLARS / FEATURES
+    ═══════════════════════════════ */
+    .pillars-section {
+      padding-bottom: 10rem;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    .pillar-card {
+      background: linear-gradient(160deg, rgba(255,255,255,0.03) 0%, rgba(201,168,76,0.02) 100%);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 2px;
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .pillar-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pillar-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(138,90,200,0.4), rgba(201,168,76,0.4), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .pillar-card:hover::before { opacity: 1; }
+
+    .pillar-card:hover {
+      border-color: rgba(138,90,200,0.2);
+      background: linear-gradient(160deg, rgba(138,90,200,0.04) 0%, rgba(201,168,76,0.04) 100%);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(138,90,200,0.06);
+    }
+
+    .pillar-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1.4rem;
+      filter: sepia(1) hue-rotate(-10deg) saturate(2) brightness(0.9);
+    }
+
+    .pillar-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+    }
+
+    .pillar-text {
+      font-size: 0.98rem;
+      line-height: 1.8;
+      color: rgba(245,240,232,0.6);
+      font-style: italic;
+    }
+
+    .pillar-card { cursor: pointer; }
+
+    .pillar-arrow {
+      margin-top: 1.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .pillar-card:hover .pillar-arrow {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+
+    /* ═══════════════════════════════
+       DETAIL PAGE OVERLAY
+    ═══════════════════════════════ */
+    #detail-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(4,3,2,0.0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, backdrop-filter 0.5s ease, background 0.5s ease;
+    }
+
+    #detail-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+      background: rgba(4,3,2,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .detail-page {
+      max-width: 860px;
+      width: 100%;
+      margin: 5rem auto 6rem;
+      padding: 0 2rem;
+      transform: translateY(30px);
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    #detail-overlay.open .detail-page {
+      transform: translateY(0);
+    }
+
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.6);
+      cursor: pointer;
+      margin-bottom: 3rem;
+      transition: color 0.3s;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .detail-back:hover { color: var(--gold-light); }
+
+    .detail-back::before { content: '←'; font-size: 0.9rem; }
+
+    .detail-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .detail-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 30px rgba(201,168,76,0.2));
+    }
+
+    .detail-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: rgba(245,240,232,0.45);
+      margin-bottom: 3rem;
+      letter-spacing: 0.05em;
+    }
+
+    .detail-divider {
+      width: 140px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin-bottom: 3rem;
+    }
+
+    .detail-body { }
+
+    .detail-body h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 3rem 0 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .detail-body h3::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+    }
+
+    .detail-body p {
+      font-size: 1.1rem;
+      line-height: 1.95;
+      color: rgba(245,240,232,0.75);
+      margin-bottom: 1.4rem;
+    }
+
+    .detail-body strong {
+      color: var(--gold-pale);
+      font-style: normal;
+    }
+
+    .detail-body em {
+      color: rgba(245,240,232,0.9);
+    }
+
+    .detail-quote {
+      border-left: 2px solid var(--gold);
+      padding: 1.2rem 1.8rem;
+      margin: 2.5rem 0;
+      background: rgba(201,168,76,0.04);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .detail-quote p {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: rgba(245,240,232,0.85);
+      margin-bottom: 0.6rem;
+    }
+
+    .detail-quote cite {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .detail-facts {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1rem;
+      margin: 2.5rem 0;
+    }
+
+    .detail-fact {
+      background: rgba(201,168,76,0.05);
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 2px;
+      padding: 1.4rem 1.2rem;
+      text-align: center;
+    }
+
+    .detail-fact-num {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+
+    .detail-fact-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+      .detail-facts { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ═══════════════════════════════
+       PROJECT CTA
+    ═══════════════════════════════ */
+    .cta-section {
+      text-align: center;
+      padding: 8rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(74,45,122,0.3) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    }
+
+    .cta-ornament {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      color: rgba(201,168,76,0.4);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .cta-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      color: var(--gold-light);
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 30px rgba(201,168,76,0.25));
+      position: relative;
+    }
+
+    .cta-text {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: rgba(245,240,232,0.65);
+      font-style: italic;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      position: relative;
+    }
+
+    .cta-sigil {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      color: rgba(138, 90, 200, 0.5);
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    /* ═══════════════════════════════
+       FOOTER
+    ═══════════════════════════════ */
+    footer {
+      border-top: 1px solid rgba(201,168,76,0.1);
+      padding: 3rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-text {
+      font-size: 0.85rem;
+      color: rgba(168,144,112,0.5);
+      font-style: italic;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-motto {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: rgba(201,168,76,0.35);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════
+       SCROLL ANIMATIONS
+    ═══════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Separator ornament */
+    .ornament {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: rgba(138,90,200,0.2);
+      letter-spacing: 1rem;
+      margin: 0;
+      padding: 1rem 0;
+    }
+
+    @media (max-width: 900px) {
+      .intro-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .pillars-grid { grid-template-columns: 1fr; }
+      .timeline::before { left: 20px; }
+      .timeline-item { grid-template-columns: 40px 1fr; }
+      .timeline-item:nth-child(odd) .timeline-content,
+      .timeline-item:nth-child(even) .timeline-content {
+        grid-column: 2; text-align: left; padding-left: 1.5rem; padding-right: 0;
+      }
+      .timeline-item:nth-child(odd) .timeline-empty,
+      .timeline-item:nth-child(even) .timeline-empty { display: none; }
+      .timeline-center { grid-column: 1; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav id="navbar">
+    <div class="nav-glass"></div>
+    <a href="#" class="nav-logo">Project <span>✦</span> Rhomaion</a>
+    <ul class="nav-links">
+      <li><a href="#imperiu">Imperiu</a></li>
+      <li><a href="#cronologie">Cronologie</a></li>
+      <li><a href="#mostenire">Moștenire</a></li>
+      <li><a href="#proiect">Proiect</a></li>
+    </ul>
+    <button class="nav-cta">Explorează</button>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-mosaic"></div>
+    <div class="hero-cross"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="hero-emblem">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="85" y="10" width="30" height="180" fill="white"/>
+        <rect x="10" y="85" width="180" height="30" fill="white"/>
+        <circle cx="100" cy="100" r="60" stroke="white" stroke-width="4" fill="none"/>
+        <circle cx="100" cy="100" r="40" stroke="white" stroke-width="2" fill="none"/>
+        <path d="M100 40 L115 70 L100 60 L85 70 Z" fill="white"/>
+        <path d="M100 160 L115 130 L100 140 L85 130 Z" fill="white"/>
+        <path d="M40 100 L70 85 L60 100 L70 115 Z" fill="white"/>
+        <path d="M160 100 L130 85 L140 100 L130 115 Z" fill="white"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Project Rhomaion</p>
+      <h1 class="hero-title">Imperiul<br/>Bizantin</h1>
+      <p class="hero-subtitle-greek">Βασιλεία Ῥωμαίων</p>
+      <div class="hero-divider"></div>
+      <p class="hero-lead">
+        O călătorie în inima celui mai longeviv imperiu creștin din istorie — 
+        o civilizație care a îmbinat splendoarea Romei cu înțelepciunea Greciei 
+        și lumina Crucii timp de unsprezece secole neîntrerupte.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn-primary" onclick="document.getElementById('imperiu').scrollIntoView({behavior:'smooth'})">Descoperă Imperiul</button>
+        <button class="btn-secondary" onclick="document.getElementById('proiect').scrollIntoView({behavior:'smooth'})">Despre Proiect</button>
+      </div>
+    </div>
+
+    <div class="scroll-indicator" onclick="document.getElementById('imperiu').scrollIntoView({behavior:'smooth'})">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ═══ INTRO — CE A FOST BIZANȚUL ═══ -->
+  <section class="intro-section" id="imperiu">
+    <div class="section-inner">
+      <p class="section-tag reveal">Introducere</p>
+      <h2 class="section-title reveal">Ce a fost Imperiul Bizantin?</h2>
+      
+      <div class="intro-grid">
+        <div class="intro-text">
+          <p class="reveal">
+            Imperiul Bizantin nu este altceva decât <strong>continuarea directă a Imperiului Roman</strong> 
+            în est — o realitate pe care locuitorii săi o știau bine, numindu-se pe ei înșiși 
+            <em>Rhomaioi</em>, adică Romani. Termenul „Bizantin" este o invenție a istoricilor 
+            occidentali din secolele XVI–XVII.
+          </p>
+          <p class="reveal">
+            Fondată oficial odată cu transferul capitalei imperiale la <strong>Constantinopol</strong> 
+            în 330 d.Hr. de către împăratul Constantin cel Mare, această civilizație a supraviețuit 
+            căderii Romei de Vest cu aproape o mie de ani, scriind pagini nemuritoare în 
+            istoria umanității.
+          </p>
+          <div class="intro-quote reveal">
+            <blockquote>
+              „Cel care dorește să scape, să se salveze dacă poate, iar cel care este pregătit să înfrunte moartea, să mă urmeze."
+            </blockquote>
+            <cite>— Constantin al XI-lea Paleologul, ultimul împărat, 29 mai 1453</cite>
+          </div>
+          <p class="reveal">
+            Timp de <strong>unsprezece secole</strong> — de la 330 la 1453 d.Hr. — Bizanțul 
+            a apărat valorile creștinătății, a transmis cultura antică Europei și lumii arabe, 
+            a influențat artele, dreptul, teologia și diplomația unei jumătăți de emisferă.
+          </p>
+        </div>
+
+        <div class="intro-stats">
+          <div class="stat-card reveal">
+            <div class="stat-number">1123</div>
+            <div class="stat-label">Ani de existență</div>
+            <div class="stat-desc">De la întemeierea Constantinopolului (330) până la căderea sa (1453) — cel mai longeviv imperiu medieval.</div>
+          </div>
+          <div class="stat-card reveal">
+            <div class="stat-number">88</div>
+            <div class="stat-label">Împărați încoronați</div>
+            <div class="stat-desc">O succesiune fascinantă de monarhi — de la Constantin cel Mare la Constantin al XI-lea Paleologul.</div>
+          </div>
+          <div class="stat-card reveal">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Continente influențate</div>
+            <div class="stat-desc">Europa, Asia și Africa purtau amprenta diplomatică, religioasă și culturală a Constantinopolului.</div>
+          </div>
+          <div class="stat-card reveal">
+            <div class="stat-number">500K+</div>
+            <div class="stat-label">Locuitori în capitală</div>
+            <div class="stat-desc">Constantinopolul era cel mai mare oraș din lumea creștină medievală — „Regina Orașelor".</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament">✦ ✦ ✦</div>
+
+  <!-- ═══ TIMELINE ═══ -->
+  <section class="timeline-section" id="cronologie">
+    <div class="section-inner">
+      <p class="section-tag reveal">Cronologie</p>
+      <h2 class="section-title reveal">Momente care au schimbat istoria</h2>
+
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>Întemeierea Constantinopolului</h3>
+            <p>Constantin cel Mare transferă capitala imperiului pe malul Bosforului, transformând vechea colonie grecească Byzantion în „Noua Romă".</p>
+          </div>
+          <div class="timeline-center">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">330 d.Hr.</div>
+          </div>
+          <div class="timeline-empty"></div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-empty"></div>
+          <div class="timeline-center">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">537 d.Hr.</div>
+          </div>
+          <div class="timeline-content">
+            <h3>Sfânta Sofia — Hagia Sophia</h3>
+            <p>Sub Iustinian I, este inaugurată catedrala Hagia Sophia — o capodoperă arhitecturală care va domina orizontul Constantinopolului timp de 900 de ani.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>Epoca lui Iustinian</h3>
+            <p>Iustinian I reconquistă Africa de Nord, Italia și sudul Hispaniei, codifică dreptul roman în <em>Corpus Iuris Civilis</em> — fundament al dreptului european modern.</p>
+          </div>
+          <div class="timeline-center">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">527–565</div>
+          </div>
+          <div class="timeline-empty"></div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-empty"></div>
+          <div class="timeline-center">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">726–843</div>
+          </div>
+          <div class="timeline-content">
+            <h3>Controversa Iconoclastă</h3>
+            <p>O criză religioasă profundă zguduie imperiul — disputele despre rolul icoanelor în credință redesenează granițele între Bizanț și Roma Papală.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>Epoca de Aur Macedoneană</h3>
+            <p>Sub dinastia macedoneană, imperiul atinge apogeul puterii militare și culturale. Bazil al II-lea „Bulgaroktonul" extinde granițele până la Dunăre și Caucaz.</p>
+          </div>
+          <div class="timeline-center">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">867–1025</div>
+          </div>
+          <div class="timeline-empty"></div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-empty"></div>
+          <div class="timeline-center">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1204</div>
+          </div>
+          <div class="timeline-content">
+            <h3>Jefuirea Constantinopolului</h3>
+            <p>Cruciații celei de-a IV-a Cruciade devastează și ocupă capitala. O rană deschisă care slăbește definitiv puterea imperiului.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>Căderea Constantinopolului</h3>
+            <p>La 29 mai 1453, Mehmed al II-lea cucerește „Regina Orașelor". Ultimul împărat, Constantin al XI-lea, moare luptând pe zidurile orașului. Se stinge o lume.</p>
+          </div>
+          <div class="timeline-center">
+            <div class="timeline-dot" style="background:var(--crimson); box-shadow: 0 0 12px rgba(139,26,26,0.8)"></div>
+            <div class="timeline-year">1453</div>
+          </div>
+          <div class="timeline-empty"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PILLARS ═══ -->
+  <section class="pillars-section" id="mostenire">
+    <div class="section-inner">
+      <p class="section-tag reveal">Moștenire</p>
+      <h2 class="section-title reveal">Pilonii unei civilizații</h2>
+      <p class="reveal" style="font-size:1.1rem; line-height:1.85; color:rgba(245,240,232,0.65); font-style:italic; max-width:600px; margin-bottom:1rem;">
+        Bizanțul nu a murit în 1453. Moștenirea sa trăiește în drept, artă, religie și diplomație — fundamentele lumii moderne.
+      </p>
+
+      <div class="pillars-grid">
+        <div class="pillar-card" onclick="openPage('drept')" role="button" tabindex="0">
+          <div class="pillar-icon">&#x2696;&#xFE0F;</div>
+          <div class="pillar-title">Drept Roman</div>
+          <p class="pillar-text">Corpus Iuris Civilis al lui Iustinian, compilat la Constantinopol, stă la baza sistemelor juridice din întreaga Europă continentală și dincolo de ea.</p>
+          <div class="pillar-arrow">Explorează &rarr;</div>
+        </div>
+        <div class="pillar-card" onclick="openPage('ortodox')" role="button" tabindex="0">
+          <div class="pillar-icon">&#x271D;&#xFE0F;</div>
+          <div class="pillar-title">Creștinism Ortodox</div>
+          <p class="pillar-text">Bizanțul a modelat Ortodoxia, a creștinat slavii prin misiunea Sfinților Chiril și Metodiu și a lăsat o spiritualitate vie în Europa de Est și Orientul Mijlociu.</p>
+          <div class="pillar-arrow">Explorează &rarr;</div>
+        </div>
+        <div class="pillar-card" onclick="openPage('arta')" role="button" tabindex="0">
+          <div class="pillar-icon">&#x1F3DB;&#xFE0F;</div>
+          <div class="pillar-title">Artă &amp; Arhitectură</div>
+          <p class="pillar-text">Mozaicuri de aur, icoane sacre, cupolele grandioase — arta bizantină a inspirat Renașterea și continuă să uimească în Ravenna, Constantinopol și Athos.</p>
+          <div class="pillar-arrow">Explorează &rarr;</div>
+        </div>
+        <div class="pillar-card" onclick="openPage('cunoastere')" role="button" tabindex="0">
+          <div class="pillar-icon">&#x1F4DC;</div>
+          <div class="pillar-title">Transmiterea Cunoașterii</div>
+          <p class="pillar-text">Scriptoriile bizantine au copiat și conservat filosofia greacă antică. Fără Bizanț, operele lui Platon, Aristotel și Euclid s-ar fi pierdut pentru totdeauna.</p>
+          <div class="pillar-arrow">Explorează &rarr;</div>
+        </div>
+        <div class="pillar-card" onclick="openPage('diplomatia')" role="button" tabindex="0">
+          <div class="pillar-icon">&#x1F310;</div>
+          <div class="pillar-title">Diplomație &amp; Protocol</div>
+          <p class="pillar-text">Imperiul a inventat diplomatia modernă — tratate, ambasadori permanenți, protocol ceremonial. Termenul „bizantin" definește astăzi orice strategie diplomatică complexă.</p>
+          <div class="pillar-arrow">Explorează &rarr;</div>
+        </div>
+        <div class="pillar-card" onclick="openPage('militar')" role="button" tabindex="0">
+          <div class="pillar-icon">&#x2694;&#xFE0F;</div>
+          <div class="pillar-title">Inovație Militară</div>
+          <p class="pillar-text">Focul grecesc, thema militară, katoikoi — armata bizantină a apărat granițele creștinătății timp de secole prin inovație constantă în tactică și tehnologie.</p>
+          <div class="pillar-arrow">Explorează &rarr;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROJECT CTA ═══ -->
+  <section class="cta-section" id="proiect">
+    <div style="position:relative; z-index:1;">
+      <p class="cta-ornament reveal">Project Rhomaion</p>
+      <h2 class="cta-title reveal">Redescoperă<br/>o lume pierdută</h2>
+      <p class="cta-text reveal">
+        Project Rhomaion este dedicat explorării profunde a civilizației bizantine — 
+        prin cercetare, narațiune și artă vizuală. O călătorie de unsprezece secole 
+        prin istoria, cultura și spiritualitatea celui mai longeviv imperiu creștin din istorie.
+      </p>
+      <div class="cta-sigil reveal">✦ Βασιλεία Ῥωμαίων ✦</div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-brand">Project Rhomaion</div>
+    <div class="footer-text">Βασιλεία Ῥωμαίων — 330–1453 d.Hr.</div>
+    <div class="footer-motto">Basileia tōn Rhōmaiōn</div>
+  </footer>
+
+  <!-- ═══ DETAIL OVERLAY ═══ -->
+  <div id="detail-overlay" role="dialog" aria-modal="true">
+    <div class="detail-page" id="detail-content"></div>
+  </div>
+
+  <script>
+    // ── Particles ──
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 35; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.cssText = `
+        left: ${Math.random()*100}%;
+        width: ${Math.random()*3+1}px;
+        height: ${Math.random()*3+1}px;
+        animation-duration: ${Math.random()*20+15}s;
+        animation-delay: ${Math.random()*15}s;
+        opacity: ${Math.random()*0.5};
+      `;
+      container.appendChild(p);
+    }
+
+    // ── Navbar fade on scroll ──
+    const navbar = document.getElementById('navbar');
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          const hero = document.querySelector('.hero');
+          const heroH = hero.offsetHeight;
+
+          if (y < 60) {
+            // At very top — always show
+            navbar.classList.remove('hidden');
+            navbar.style.opacity = '';
+            navbar.style.transform = '';
+          } else if (y > lastY) {
+            // Scrolling DOWN — hide navbar
+            navbar.classList.add('hidden');
+          } else {
+            // Scrolling UP — show navbar
+            navbar.classList.remove('hidden');
+            navbar.style.opacity = '1';
+            navbar.style.transform = '';
+          }
+
+          lastY = y;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // ── Scroll reveal ──
+    const revealAll = document.querySelectorAll('.reveal, .timeline-item, .pillar-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.classList.contains('pillar-card')
+            ? Array.from(entry.target.parentNode.children).indexOf(entry.target) * 100 : 0;
+          setTimeout(() => entry.target.classList.add('visible'), delay);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealAll.forEach(el => observer.observe(el));
+
+    // ── Detail Pages Data ──
+    const pages = {
+      drept: {
+        eyebrow: 'Moștenire Juridică',
+        title: 'Dreptul Roman Bizantin',
+        subtitle: 'Corpus Iuris Civilis — Fundamentul Europei Moderne',
+        content: `
+          <h3>Originile Dreptului Roman</h3>
+          <p>Dreptul roman reprezintă una dintre cele mai durabile și influente contribuții ale antichității la civilizația umană. Născut din cutumele orașului Roma, el a evoluat pe parcursul a peste un mileniu, de la <strong>Legea celor XII Table</strong> (450 î.Hr.) până la marile codificări bizantine din secolul al VI-lea d.Hr. Spre deosebire de alte sisteme juridice antice, dreptul roman s-a caracterizat printr-o capacitate extraordinară de adaptare și sistematizare rațională.</p>
+          <p>Juriști celebri precum <strong>Gaius, Papinian, Ulpian și Modestinus</strong> — cunoscuți colectiv ca jurisconsulții clasici — au elaborat în secolele II–III d.Hr. un corp de doctrină juridică de o sofisticare remarcabilă, definind concepte care supraviețuiesc până astăzi: persoana juridică, proprietatea, contractul, delictul civil, succesiunea.</p>
+
+          <div class="detail-facts">
+            <div class="detail-fact"><div class="detail-fact-num">450 î.Hr.</div><div class="detail-fact-label">Legea XII Table</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">529–534</div><div class="detail-fact-label">Corpus Iuris Civilis</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">50+</div><div class="detail-fact-label">Țări influențate azi</div></div>
+          </div>
+
+          <h3>Iustinian și Marea Codificare</h3>
+          <p>Împăratul <strong>Iustinian I</strong> (527–565 d.Hr.) a înțeles că imperiul său nu poate fi unit doar prin armată sau religie — îi trebuia și o lege unică, clară, aplicabilă tuturor. Astfel, în 528 d.Hr., a constituit o comisie de juristi condusă de marele <strong>Tribonian</strong>, cu misiunea de a sistematiza întreaga moștenire juridică romană.</p>
+          <p>Rezultatul a fost monumentalul <em>Corpus Iuris Civilis</em>, alcătuit din patru părți: <strong>Codex Iustinianus</strong> (constituțiile imperiale), <strong>Digesta/Pandecte</strong> (extrase din jurisprudența clasică — 50 de cărți), <strong>Institutiones</strong> (manual pentru studenții la drept) și <strong>Novellae</strong> (legile noi emise de Iustinian). Această operă a fost finalizată în doar șase ani — o performanță extraordinară pentru amploarea sa.</p>
+
+          <div class="detail-quote">
+            <p>„Împăratul este singurul legiuitor — dar legea trebuie să fie rațiune scrisă, nu voință arbitrară."</p>
+            <cite>— Principiu din Institutiones lui Iustinian</cite>
+          </div>
+
+          <h3>Dreptul Bizantin după Iustinian</h3>
+          <p>Codificarea lui Iustinian nu a fost un punct final, ci un nou început. Împărații următori au continuat să dezvolte sistemul juridic: <strong>Leon al III-lea</strong> a emis <em>Ecloga</em> (726), o reformă simplificatoare cu influențe creștine puternice, iar <strong>Vasile I și Leon al VI-lea</strong> au publicat <em>Basilicele</em> (880–888) — o reelaborare în greacă a Corpus-ului lui Iustinian, în 60 de cărți, adaptată noilor realități ale imperiului.</p>
+          <p>Mai târziu, <strong>Constantin Harmenopulos</strong> a compilat în 1345 <em>Hexabiblos</em> — o sinteză a dreptului bizantin folosită în Grecia până în 1946! Aceasta ilustrează cu forță continuitatea extraordinară a tradiției juridice bizantine.</p>
+
+          <h3>Moștenirea în Europa Modernă</h3>
+          <p>Redescoperit în Italia în secolul al XI-lea — mai ales prin școala juridică de la <strong>Bologna</strong>, fondată în 1088 — Corpus Iuris Civilis a devenit baza întregului drept european continental. Sistemele juridice ale Franței, Italiei, Spaniei, Germaniei, României și ale majorității națiunilor din America Latină se întemeiază pe principii de origine romană-bizantină.</p>
+          <p>Concepte fundamentale care guvernează viața modernă — <strong>prezumția de nevinovăție, proprietatea privată, contractul consensual, răspunderea delictuală, tutela și curatela</strong> — toate au rădăcinile în jurisprudența romană codificată la Constantinopol. Fără Bizanț, această moștenire s-ar fi fragmentat și s-ar fi pierdut în tumultul Evului Mediu timpuriu.</p>
+        `
+      },
+      ortodox: {
+        eyebrow: 'Credință și Civilizație',
+        title: 'Creștinismul Ortodox',
+        subtitle: 'Bizanțul — Lumina Răsăritului Creștin',
+        content: `
+          <h3>Nașterea Creștinismului de Stat</h3>
+          <p>Imperiul Bizantin a fost primul stat din istorie care a adoptat creștinismul ca religie oficială. Edictul de la Milano (313 d.Hr.), emis de <strong>Constantin cel Mare</strong>, a acordat libertate religioasă tuturor, dar adevărata schimbare a venit odată cu <strong>Edictul de la Tesalonic</strong> (380 d.Hr.) al lui Teodosie I, care a proclamat creștinismul nicean religie de stat a imperiului. De atunci, Biserica și Statul bizantin au format o simbioză unică — cunoscută sub termenul de <em>symphonia</em>.</p>
+          <p>Împăratul era înțeles ca <strong>vicarul lui Dumnezeu pe pământ</strong> — nu preot, dar cu o responsabilitate sacră pentru unitatea și puritatea credinței. El convoca conciliile ecumenice, numea patriarhi, aproba canoane. Această teologie politică, numită <em>cesaropapism</em> în Occident (deși termenul e imprecis), a dat Bizanțului o coeziune spirituală extraordinară.</p>
+
+          <div class="detail-facts">
+            <div class="detail-fact"><div class="detail-fact-num">7</div><div class="detail-fact-label">Sinoade Ecumenice</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">863</div><div class="detail-fact-label">Misionarii la slavi</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">1054</div><div class="detail-fact-label">Marea Schismă</div></div>
+          </div>
+
+          <h3>Sinoadele Ecumenice și Dogma Creștină</h3>
+          <p>Definirea doctrinei creștine ortodoxe s-a realizat prin șapte <strong>Sinoade Ecumenice</strong>, toate convocate pe teritoriul imperial și prezidiate — sau confirmate — de împăratul de la Constantinopol. De la <strong>Niceea I</strong> (325, unde s-a formulat Simbolul de credință și s-a condamnat arianismul) până la <strong>Niceea II</strong> (787, care a restabilit cinstirea icoanelor), aceste adunări au definit cine este Hristos, care este relația dintre cele trei persoane divine și ce rol au icoanele în viața Bisericii.</p>
+          <p>Controversa cea mai dramatică a fost <strong>iconoclasmul</strong> (726–843): doi împărați, Leon al III-lea și Constantin al V-lea, au ordonat distrugerea icoanelor, considerându-le idolatrie. Persecuțiile au fost violente — călugări uciși, icoane arse, mâini tăiate celor care le pictau. Restaurarea finală a icoanelor în 843 este celebrată și astăzi în Biserica Ortodoxă ca <em>Triumful Ortodoxiei</em>, în prima duminică din Postul Mare.</p>
+
+          <div class="detail-quote">
+            <p>„Ceea ce Cuvântul lui Dumnezeu comunică prin urechi, imaginea o comunică prin ochi."</p>
+            <cite>— Sfântul Ioan Damaschin, apărător al icoanelor, sec. VIII</cite>
+          </div>
+
+          <h3>Creștinarea Slavilor — Misiunea Sfinților Chiril și Metodiu</h3>
+          <p>Una dintre cele mai profunde contribuții ale Bizanțului la istoria lumii a fost <strong>creștinarea popoarelor slave</strong>. În 863, împăratul Mihail al III-lea i-a trimis pe frații <strong>Constantin (Chiril) și Metodiu</strong> din Tesalonic în misiune la Moravia Mare. Cei doi au realizat un act cultural de o importanță colosală: au inventat <strong>alfabetul glagolitic</strong> (precursorul chirilicei) pentru a putea traduce Scriptura și liturghia în limba slavonă.</p>
+          <p>Alfabetul chirilic — derivat din majusculele grecești — poartă numele lui Chiril și este folosit astăzi de peste <strong>250 de milioane de oameni</strong>: ruși, ucraineni, bulgari, sârbi, macedoneni, belaruși și multe popoare din Asia Centrală. Creștinarea Bulgariei (864), Serbiei (sec. IX), Rusiei Kievene (988) — toate sunt consecințe directe ale politicii misionare bizantine.</p>
+
+          <h3>Marea Schismă din 1054 și Moștenirea Ortodoxiei</h3>
+          <p>Tensiunile acumulate decenii între Roma și Constantinopol au explodat în <strong>1054</strong>, când legații papali și Patriarhul Mihail Cerularie s-au excomunicat reciproc. Schisma a separat definitiv creștinismul în <em>catolic</em> și <em>ortodox</em>, cele două ramuri continuând să existe până astăzi cu teologie și practici distincte.</p>
+          <p>Ortodoxia bizantină a supraviețuit căderii imperiului și trăiește astăzi în <strong>Patriarhia Ecumenică de Constantinopol</strong> (Istanbul), în Bisericile Ortodoxe naționale ale Greciei, Rusiei, României, Serbiei, Bulgariei și în diaspora mondială — o moștenire spirituală vie cu peste <strong>300 de milioane de credincioși</strong>.</p>
+        `
+      },
+      arta: {
+        eyebrow: 'Frumusețe Sacră',
+        title: 'Arta & Arhitectura Bizantină',
+        subtitle: 'Lumina de Aur a Împărăției Cerești',
+        content: `
+          <h3>O Estetică a Transcendenței</h3>
+          <p>Arta bizantină nu urmărește frumusețea lumii materiale, ci <strong>frumusețea lumii de dincolo</strong>. Spre deosebire de naturalismul antic greco-roman sau de realismul Renașterii, artiștii bizantini au creat un limbaj vizual deliberat stilizat, hieratic, îndreptat spre veșnicie. Fundalul de aur al icoanelor nu reprezintă un cer fizic, ci <em>lumina necreată</em> — prezența divină care depășește spațiul și timpul.</p>
+          <p>Această estetică a fost elaborată conștient pe parcursul secolelor, în strânsă legătură cu teologia. Conciliul Quinisext (692) a stabilit norme pentru reprezentarea lui Hristos; teologii iconoduli — mai ales <strong>Sfântul Teodor Studitul și Sfântul Nichifor</strong> — au elaborat o veritabilă <em>teologie a icoanei</em>: icoana nu este idol, ci fereastră spre prototipul ei divin, și cinstirea ei se întoarce la cel reprezentat.</p>
+
+          <div class="detail-facts">
+            <div class="detail-fact"><div class="detail-fact-num">537</div><div class="detail-fact-label">Hagia Sophia inaugurată</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">30m</div><div class="detail-fact-label">Diametrul cupolei</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">~1000</div><div class="detail-fact-label">Ani de artă mozaicală</div></div>
+          </div>
+
+          <h3>Hagia Sophia — Capodopera Arhitecturii Mondiale</h3>
+          <p>Inaugurată în 537 de Iustinian I, <strong>Hagia Sophia</strong> (Sfânta Înțelepciune) a rămas timp de aproape un mileniu cea mai mare clădire cu cupolă din lume. Arhitecții <strong>Anthemios din Tralles și Isidor din Milet</strong> au rezolvat o problemă arhitecturală revoluționară: cum să susții o cupolă circulară de 30 de metri deasupra unui plan pătrat. Soluția — pandantivii sferici și semicupolele laterale — a devenit modelul arhitecturii islamice (moscheea Suleymaniye din Istanbul, Taj Mahal) și al Renașterii (catedrala Sfântul Petru din Roma).</p>
+          <p>Legendele spun că Iustinian, intrând pentru prima dată în basilică, a exclamat: <em>„Slavă lui Dumnezeu, care m-a învrednicit să săvârșesc o astfel de lucrare. Te-am întrecut, Solonon!"</em> Procopios din Cezareea descria cupola ca suspendat de un lanț de aur din cer — atât de subțiri erau zidurile și atât de abundentă lumina din cele 40 de ferestre ale tambourului.</p>
+
+          <div class="detail-quote">
+            <p>„Nu știam dacă suntem în cer sau pe pământ... suntem siguri doar că Dumnezeu locuiește acolo printre oameni."</p>
+            <cite>— Cronicile Primare Rusești, despre solii lui Vladimir la Hagia Sophia, 987</cite>
+          </div>
+
+          <h3>Mozaicul Bizantin — Lumină Materializată</h3>
+          <p>Arta mozaicală a atins în Bizanț un nivel de rafinament neatins înainte sau după. Spre deosebire de mozaicul roman, care folosea piatră colorată, meșterii bizantini au inventat <strong>tesserae de sticlă emailată</strong> cu foiță de aur sau argint în interior. Plasate ușor oblic, aceste cubulețe reflectau lumina în unghiuri multiple, creând efectul de strălucire pâlpâitoare specific artei bizantine.</p>
+          <p>Capodopere supraviețuitoare se găsesc la <strong>Ravenna</strong> (mozaicurile din San Vitale și Sant'Apollinare, sec. VI — declarate Patrimoniu UNESCO), la <strong>Palermo</strong> (Cappella Palatina, sec. XII), la <strong>Hosios Loukas</strong> în Grecia (sec. XI) și, parțial, în chiar Hagia Sophia din Istanbul. Programul iconografic al unei biserici bizantine era o cosmologie vizuală completă: Hristos Pantocrator în cupolă, Teotokos în absidă, sfinții și apostolii pe pereți — întreaga istorie a mântuirii.</p>
+
+          <h3>Icoana — Teologie Vizibilă</h3>
+          <p>Icoana (din grecescul <em>eikon</em>, imagine) este poate cea mai recunoscibilă contribuție artistică a Bizanțului. Pictate pe lemn cu tehnica <em>tempera</em> (pigmenți în emulsie de gălbenuș de ou), icoanele urmau canoane iconografice stricte: proporțiile elongate ale corpului, gesturile hieratice, privirea frontală a figurilor, absența umbrei naturale — toate semne ale unui limbaj artistic codificat teologic.</p>
+          <p>Școala de icoană de la Muntele Athos, care continuă până astăzi, și marile centre de iconografie din Novgorod, Moscova, Salonic, Creta — toate descind direct din tradiția artei bizantine. Influența sa asupra <strong>Renașterii italiene timpurii</strong> este direct observabilă: Cimabue, Duccio și chiar tânărul Giotto au preluat schema compoziționala și tehnica aurului din arta greco-ortodoxă a sec. XIII.</p>
+        `
+      },
+      cunoastere: {
+        eyebrow: 'Lumina Minții',
+        title: 'Transmiterea Cunoașterii',
+        subtitle: 'Bizanțul — Custodele Moștenirii Antice',
+        content: `
+          <h3>Ce ar fi pierdut lumea fără Bizanț?</h3>
+          <p>Această întrebare nu este retorică. Când Imperiul Roman de Apus s-a prăbușit sub valurile migrațiilor barbare (476 d.Hr.), cele mai multe biblioteci din Roma, Milano și Cartagina au fost distruse sau risipite. Nivelul de alfabetizare în Europa de Vest a scăzut dramatic. Latina — limba culturii — a supraviețuit doar în mânăstiri izolate. Greaca, limba filosofiei și științei antice, a dispărut aproape complet din Occident timp de șapte sute de ani.</p>
+          <p>La Constantinopol, în schimb, <strong>continuitatea culturală nu a fost ruptă niciodată</strong>. Scriptoriile imperiale, mânăstirile și universitățile bizantine au continuat să copieze, să studieze și să comenteze operele anticilor. Fără această activitate sistematică de conservare, texte fundamentale ale civilizației ar fi dispărut pentru totdeauna.</p>
+
+          <div class="detail-facts">
+            <div class="detail-fact"><div class="detail-fact-num">425</div><div class="detail-fact-label">Universitatea din CP fondată</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">~900</div><div class="detail-fact-label">Manuscrise recuperate</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">1453</div><div class="detail-fact-label">Exodul savanților spre Italia</div></div>
+          </div>
+
+          <h3>Universitatea din Constantinopol și Cultura Savantă</h3>
+          <p>Întemeiată de <strong>Teodosie al II-lea în 425 d.Hr.</strong>, Universitatea din Constantinopol — <em>Pandidakterion</em> — este una dintre cele mai vechi instituții de învățământ superior din lume, anterioară Universității din Bologna. Ea cuprindea catedre de gramatică, retorică, filosofie și drept, predate atât în greacă cât și în latină. Împăratul <strong>Constantin al IX-lea</strong> a reorganizat-o în 1045, adăugând o prestigioasă Facultate de Drept și o Facultate de Filosofie condusă de celebrul <strong>Mihail Psellos</strong>.</p>
+          <p>Psellos însuși este un exemplu remarcabil al intelectualului bizantin: filosof, matematician, teolog, medic, astro­nom și consilier imperial, el a scris despre Platon, Aristotel, hermetism, magie neoplatoniciană și farmacologie — tot în același secol în care Europa de Vest abia redescoperise logica aristotelică.</p>
+
+          <div class="detail-quote">
+            <p>„Filosofia este mama tuturor științelor, iar fără ea, teologia însăși rămâne oarbă."</p>
+            <cite>— Mihail Psellos, Chronographia, sec. XI</cite>
+          </div>
+
+          <h3>Scriptoriile și Copierea Manuscriselor</h3>
+          <p>În mânăstirile și palatele imperiale, călugări și caligrafi au copiat cu răbdare mii de manuscrise. <strong>Fotie I, Patriarhul Constantinopolului</strong> (sec. IX), a compilat <em>Bibliotheca</em> — o enciclopedie a 279 de opere citite și rezumate, incluzând texte ale căror originale s-au pierdut ulterior. Fără Fotie, nu am ști nimic despre romancierii greci antici Achile Tatius sau Heliodor.</p>
+          <p>Momentul critic a fost <strong>căderea Constantinopolului în 1453</strong>. Savanții greci care au fugit în Italia au adus cu ei sute de manuscrise — opere ale lui Platon, Plotin, Homer, Tucidide, Sofocle — care au alimentat direct <strong>Renașterea italiană</strong>. <em>Giorgio Gemistos Plethon</em> a influențat enorm Academia Platoniciană din Florența a lui Cosimo de Medici. <em>Bessarion din Niceea</em>, ajuns cardinal la Roma, a donat Veneției biblioteca sa de 746 codici greci — nucleul viitoarei Biblioteca Marciana.</p>
+
+          <h3>Știința și Tehnologia Bizantină</h3>
+          <p>Bizanțul nu a fost doar un conservator pasiv al cunoașterii antice — el a și <strong>inovate</strong>. <em>Leon Matematicianul</em> (sec. IX) a construit pentru palatul imperial un sistem mecanic de statui care se mișcau și cântau — un fel de robotică timpurie. A redescoperit trigonometria, a studiat optica și a organizat un sistem de stații de telegrafie optică de-a lungul frontierei asiatice. <em>Heron din Constantinopol</em> (nu cel alexandrin) a scris despre mașini de război și mecanisme automate.</p>
+          <p>În medicină, spitalul (<em>xenon</em>) și leprozeriile sunt instituții bizantine. <strong>Spitalul lui Pantokrator</strong> din Constantinopol (1136) avea secții specializate separate — chirurgie, oftalmologie, medicină generală — și un personal medical remunerat, cu rotații de ture. Este, în esență, spitalul modern în forma sa embrionară.</p>
+        `
+      },
+      diplomatia: {
+        eyebrow: 'Arta Puterii Subtile',
+        title: 'Diplomația Bizantină',
+        subtitle: 'Când Cuvântul e mai Ascuțit decât Sabia',
+        content: `
+          <h3>Inventatorii Diplomației Moderne</h3>
+          <p>Dacă arta militară romană a dat lumii legiunile, Bizanțul i-a dat <strong>diplomația profesionistă</strong>. Confruntați cu presiuni constante din toate direcțiile — arabi, perși, bulgari, ruși, pecenegi, normanzi, turci — împărații de la Constantinopol au transformat relațiile externe într-o știință rafinată, preferând adesea victoria prin negociere, mită, manipulare sau alianțe matrimoniale în locul costisitoarelor campanii militare.</p>
+          <p>Tratatul <em>De Administrando Imperio</em>, scris de <strong>Constantin al VII-lea Porfirogenetul</strong> (sec. X), este unul dintre primele manuale de politică externă din istorie: el descrie în detaliu cum să gestionezi relațiile cu fiecare popor vecin, care sunt slăbiciunile lor, cum să-i pui unii împotriva altora și cum să-i atragi în orbita Bizanțului fără război.</p>
+
+          <div class="detail-facts">
+            <div class="detail-fact"><div class="detail-fact-num">~100</div><div class="detail-fact-label">Tratate internaționale</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">9</div><div class="detail-fact-label">Secole de ambasade</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">1453</div><div class="detail-fact-label">Ultimul tratat semnat</div></div>
+          </div>
+
+          <h3>Instrumentele Diplomației Bizantine</h3>
+          <p>Arsenalul diplomatic al Bizanțului era diversificat și elaborat. <strong>Căsătoriile diplomatice</strong> — plasarea prințeselor imperiale sau acceptarea soțiilor din familii regale barbare — erau instrumentul preferat pentru consolidarea alianțelor. O prințesă bizantină cu dota sa aducea nu doar pace, ci și o misiune culturală: ea sosea cu preoți, artiști, meșteri, aducând cu ea credința ortodoxă, arta, arhitectura și administrația bizantină.</p>
+          <p><strong>Titlurile onorifice</strong> constituiau un alt instrument subtil: acordarea titlului de <em>caesar</em>, <em>sebastokrator</em>, <em>despot</em> sau simplu <em>patriciu</em> unui rege barbar îl integra simbolic în ierarhia imperială, transformându-l dintr-un adversar într-un vasal onorat. <strong>Darurile imperiale</strong> — vase de sticlă, țesături de mătase, relicve, icoane, manuscrise, obiecte de fildeș — nu erau simple cadouri, ci mesaje de putere și civilizație.</p>
+
+          <div class="detail-quote">
+            <p>„Un creștin care luptă cu un alt creștin face bucurie diavolului. Dă-i deci dușmanului tău aur, nu sânge."</p>
+            <cite>— Atribuit strategilor imperiali, din De Re Militari, sec. VI</cite>
+          </div>
+
+          <h3>Protocolul Ceremonial — Teatrul Puterii</h3>
+          <p>Curtea imperială din Constantinopol era cel mai elaborat teatru al puterii din lumea medievală. <strong>Constantin al VII-lea Porfirogenetul</strong> a codificat în <em>De Ceremoniis</em> (sec. X) întregul protocol curtenesc: cum se organizau recepțiile ambasadorilor, în ce ordine intrau în sala tronului, câte metanii trebuiau să facă, ce cuvinte să rostească, ce culori puteau purta — fiecare detaliu era calculat să transmită mesajul supremației imperiale.</p>
+          <p>Ambasadorii străini care ajungeau la Constantinopol erau deliberat copleșiți: automata mecanice (lei care rugeau, păsări care cântau pe un arbore de aur), cortegii de oficiali în veșminte de aur și purpură, scena tronului care se înălța mecanic în timp ce oaspetele se prosterna — toate serveau aceleiași funcții: să demonstreze că Imperiul Bizantin era nu simplu cel mai puternic stat din lume, ci <em>delegatul divin al ordinii cosmice</em>.</p>
+
+          <h3>Moștenirea Diplomatică</h3>
+          <p>Practicile diplomatice moderne — <strong>ambasadele permanente, imunitatea diplomatică, protocoalele de acreditare, negocierea tratelor bilaterale, dreptul internațional cutumiar</strong> — toate au precedente directe în practica byzantina. Veneția, principalul moștenitor comercial al Bizanțului, a preluat și transmis Europei occidentale aceste practici. Nu întâmplător, <em>termenul „bizantin"</em> a ajuns să definească în limbajul cotidian orice strategie politică deosebit de complexă, indirectă și rafinată.</p>
+        `
+      },
+      militar: {
+        eyebrow: 'Arta Războiului',
+        title: 'Inovația Militară Bizantină',
+        subtitle: 'Sabia și Focul care au Apărat Creștinătatea',
+        content: `
+          <h3>Moștenitorii Legiunilor Romane</h3>
+          <p>Armata bizantină a început ca moștenitoare directă a legiunilor romane, dar a evoluat dramatic de-a lungul celor unsprezece secole de existență, adaptându-se continuu la noi amenințări și noi realități. Spre deosebire de armata romană clasică — infanterie grea organizată în formații rigide — <strong>armata bizantină a preferat mobilitatea, surpriza și inovația tehnologică</strong>. Ea a luptat cu succes contra unor adversari extrem de diferiți: perși sassanizi, arabi, bulgari, pecenegi, cumani, normanzi, cruciați și, în final, otomani.</p>
+          <p>Marii strategi militari ai imperiului — <strong>Mauricius, Nikephoros Phokas, Ioan Tzimiskes, Vasile al II-lea</strong> — au lăsat în urmă nu doar victorii pe câmpul de luptă, ci și tratate militare (<em>Strategikon, Taktika, Praecepta Militaria</em>) care sunt studiate și astăzi în academiile militare.</p>
+
+          <div class="detail-facts">
+            <div class="detail-fact"><div class="detail-fact-num">673–678</div><div class="detail-fact-label">Primul Foc Grecesc</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">~30</div><div class="detail-fact-label">Theme militare</div></div>
+            <div class="detail-fact"><div class="detail-fact-num">1000+</div><div class="detail-fact-label">Ani de inovație</div></div>
+          </div>
+
+          <h3>Focul Grecesc — Arma Secretă a Bizanțului</h3>
+          <p>Nicio inovație militară bizantină nu a stârnit atâta admirație și teroare ca <strong>focul grecesc</strong> (<em>hygron pyr</em> — focul lichid). Inventat în jurul anului 672 de un inginer sirian pe nume <strong>Kallinikos din Heliopolis</strong>, era un amestec incendiar capabil să ardă pe apă și imposibil de stins cu apă obișnuită. Era lansat prin tuburi de bronz montate pe provele navelor de război — <em>dromones</em> — producând un jet de foc lichid care incendia navele inamice.</p>
+          <p>Compoziția exactă a focului grecesc este <strong>unul dintre marile mistere ale istoriei</strong>. Imperiul a păstrat-o cu o gelozie extremă — era un secret de stat transmis din tată în fiu în câteva familii. Analiza modernă sugerează că conținea o formă brută de petrol, rășini, var nestins și posibil salpetru — dar proporțiile exacte rămân necunoscute. Focul grecesc a salvat Constantinopolul de două ori de la cucerire: în asediile arabe din 674–678 și 717–718, distrugând flotele islamice și obligând retragerea.</p>
+
+          <div class="detail-quote">
+            <p>„Era ca un zmeu de foc zburând prin aer. Nu puteai nici să-l stingi cu apă, nici să fugi de el pe mare."</p>
+            <cite>— Cronica arabă despre asediul Constantinopolului, 674–678</cite>
+          </div>
+
+          <h3>Sistemul Thematic — Reforma care a Salvat Imperiul</h3>
+          <p>În fața expansiunii arabe din secolul al VII-lea, Imperiul a pierdut Siria, Palestina și Egiptul — cele mai bogate provincii. Răspunsul a fost o reformă militaro-administrativă radicală: <strong>sistemul thematic</strong>. Teritoriile rămase au fost reorganizate în circumscripții militare (<em>themata</em>), conduse de un <em>strategos</em> (general) care cumula puterea militară și civilă.</p>
+          <p>Soldații (stratiotai) primeau loturi de pământ în schimbul serviciului militar — un sistem de <em>militari-fermieri</em> care a rezolvat problema costului enorm al armatei profesioniste. Fiii moșteneau obligația militară odată cu pământul. Sistemul thematic a dat imperiului o rezervă permanentă de oșteni calificați, motivați și cu cunoaștere locală perfectă a terenului, creând o apărare în profunzime extraordinar de rezistentă.</p>
+
+          <h3>Cavaleria Grea — Kataphraktoi</h3>
+          <p>Bizanțul a perfecționat <strong>cavaleria grea blindată</strong> — <em>kataphraktoi</em> — până la un nivel necunoscut în Occidentul medieval. Atât călărețul cât și calul erau acoperiți de zale de fier sau lamele metalice (clibanion), iar lăncierul purta o lance lungă (<em>kontarion</em>) mânuită cu ambele mâini. În formație, un escadron de cataphractoi era practic de neoprit pentru infanterie.</p>
+          <p>Sub <strong>Nikephoros al II-lea Phokas</strong> (963–969), kataphraktoii au constituit nucleul armatei de reconquistă care a recuperat Cilicia și nordul Siriei de la arabi. Tratatul său militar <em>Praecepta Militaria</em> descrie în detaliu formațiile, tactica și antrenamentul acestei cavalerii de elită — un document de o valoare istorică și militară extraordinară.</p>
+
+          <h3>Zidurile Constantinopolului — Cea mai Puternică Fortăreață Medievală</h3>
+          <p>Pe lângă armată, cea mai mare realizare militară a Bizanțului a fost <strong>sistemul de fortifi­cații al Constantinopolului</strong>. Zidul terestru construit de <strong>Teodosie al II-lea</strong> (412–413) — un sistem triplu de șanțuri, ziduri exterioare și interioare cu turnuri la fiecare 50–70 de metri — a rezistat timp de o mie de ani la zeci de asedii. Nicio armată nu l-a cucerit prin asalt frontal timp de un mileniu: hunii, avarii, arabii, bulgarii, rușii — toți au plecat înfrânți. Doar în 1204 cruciații au pătruns prin port, iar în 1453 tunurile otomane au adus, după 53 de zile, prima spărtură în zidul care protejase lumea creștină vreme de unsprezece secole.</p>
+        `
+      }
+    };
+
+    // ── Open / Close Detail Page ──
+    const overlay = document.getElementById('detail-overlay');
+    const detailContent = document.getElementById('detail-content');
+
+    function openPage(key) {
+      const data = pages[key];
+      if (!data) return;
+      detailContent.innerHTML = `
+        <button class="detail-back" onclick="closePage()">Înapoi la Moștenire</button>
+        <p class="detail-eyebrow">${data.eyebrow}</p>
+        <h1 class="detail-title">${data.title}</h1>
+        <p class="detail-subtitle">${data.subtitle}</p>
+        <div class="detail-divider"></div>
+        <div class="detail-body">${data.content}</div>
+      `;
+      overlay.scrollTop = 0;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePage() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Close on backdrop click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closePage();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePage();
+    });
+  </script>
+</body>
+</html>
